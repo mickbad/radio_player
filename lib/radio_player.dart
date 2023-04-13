@@ -23,11 +23,12 @@ class RadioPlayer {
 
   /// Set new streaming URL.
   Future<void> setChannel(
-      {required String title, required String url, String? imagePath}) async {
+      {required String title, required String url, String? imagePath, ByteData? imageBytes}) async {
     await Future.delayed(Duration(milliseconds: 500));
     await _methodChannel.invokeMethod('set', [title, url]);
 
     if (imagePath != null) setDefaultArtwork(imagePath);
+    if (imageBytes != null) setDefaultArtworkBytes(imageBytes);
   }
 
   Future<void> play() async {
@@ -45,6 +46,11 @@ class RadioPlayer {
   /// Set default image.
   Future<void> setDefaultArtwork(String image) async {
     final byteData = await rootBundle.load(image);
+    _defaultArtworkChannel.send(byteData);
+  }
+
+  /// Set bytes image.
+  Future<void> setDefaultArtworkBytes(ByteData byteData) async {
     _defaultArtworkChannel.send(byteData);
   }
 
